@@ -41,6 +41,7 @@ def get_column_range(df: DataFrame, column_name: str, get_consecutive_related_qu
 
     return None
 
+
 def get_advisor_feedback_1_df(df):
     result = get_column_range(df, "Por favor, seleccione el o los ejecutivos que les asesoran", True)
 
@@ -50,6 +51,31 @@ def get_advisor_feedback_1_df(df):
     df_options = df.loc[:, first1:last1]
     df_questions = df.loc[:, first2:last2]
 
+    first1 = df_options[first1].values[0]
+    last1 = df_options[last1].values[0]
+    first2 = df_questions[first2].values[0]
+    last2 = df_questions[last2].values[0]
+
     advisor_df = pd.concat([df_options, df_questions], axis=1)
 
-    return advisor_df
+    advisor_names = advisor_df.iloc[0]
+    advisor_df.columns = advisor_names
+    advisor_df = advisor_df.drop([0]).reset_index(drop=True)
+
+    return advisor_df, (first1, last1), (first2, last2)
+
+
+def get_advisor_names(advisor_df, first_range):
+    names = advisor_df.loc[:, first_range[0]:first_range[1]]
+    return names.columns.values.flatten().tolist()
+
+
+def get_particular_advisor_perfomance_df(advisor_df, second_range, name):
+    df_particular = advisor_df[advisor_df[name].str.len() > 0]
+    questions = df_particular.loc[:, second_range[0]:second_range[1]]
+
+    name_index = advisor_df[name].to_frame().columns
+    df_particular = df_particular.loc[:, name_index.append(questions)]
+
+    return df_particular
+
