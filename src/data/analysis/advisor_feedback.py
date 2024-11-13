@@ -1,5 +1,6 @@
-import pandas as pd 
+import pandas as pd
 from pandas import DataFrame
+import numpy as np
 
 def eval_last(first, last, last_column_type):
     if first is not None and last is not None:
@@ -60,9 +61,18 @@ def get_advisor_feedback_1_df(df):
 
     advisor_names = advisor_df.iloc[0]
     advisor_df.columns = advisor_names
-    advisor_df = advisor_df.drop([0]).reset_index(drop=True)
+    advisor_df = advisor_df.drop([0]).reset_index(drop=True).replace("", np.nan)
 
     return advisor_df, (first1, last1), (first2, last2)
+
+
+def melt(df, columns_to_keep, columns_to_melt, new_column_name):
+    df_long = pd.melt(df, id_vars=columns_to_keep, value_vars=columns_to_melt,
+                      var_name=new_column_name, value_name="Present")
+    df_long = df_long[df_long["Present"].notna()].drop(columns="Present")
+    df_long = df_long[[new_column_name] + [col for col in df_long.columns if col != new_column_name]]
+
+    return df_long
 
 
 def get_advisor_names(advisor_df, first_range):
