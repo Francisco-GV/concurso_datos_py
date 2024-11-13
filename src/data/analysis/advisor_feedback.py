@@ -93,3 +93,11 @@ def get_particular_advisor_perfomance_df(advisor_df, second_range, name):
 
     return df_particular
 
+
+def count_qualitative_responses(particular_advisor_df, group_column_name, question, count_column_name):
+    count_df = (particular_advisor_df
+                .groupby(group_column_name)[question]
+                .value_counts()
+                .reset_index(name=count_column_name))
+    return count_df
+
