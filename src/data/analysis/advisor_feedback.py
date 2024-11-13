@@ -24,12 +24,12 @@ def get_column_range(df: DataFrame, column_name: str, get_consecutive_related_qu
         if column_type in ["Open-Ended Response", "Response"] or not column_type:
             range_type = eval_last(first, last, last_column_type)
             if range_type:
-                result[range_type].append((first, last))
+                result[range_type] = (first, last)
             return result
         elif not column.startswith("Unnamed"):
             range_type = eval_last(first, last, last_column_type)
             if range_type:
-                result[range_type].append((first, last))
+                result[range_type] = (first, last)
 
             if get_consecutive_related_questions:
                 first = column
@@ -78,6 +78,10 @@ def melt(df, columns_to_keep, columns_to_melt, new_column_name):
 def get_advisor_names(advisor_df, first_range):
     names = advisor_df.loc[:, first_range[0]:first_range[1]]
     return names.columns.values.flatten().tolist()
+
+def get_advisor_questions(advisor_df, second_range):
+    questions = advisor_df.loc[:, second_range[0]:second_range[1]]
+    return questions.columns.values.flatten().tolist()
 
 
 def get_particular_advisor_perfomance_df(advisor_df, second_range, name):
