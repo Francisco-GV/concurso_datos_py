@@ -1,0 +1,31 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+
+    --header-height: 115px;
+    --header-bg: white;
+    --content-bg: #dbdbdb;
+}
+
+header {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    padding-left: 25px;
+    height: var(--header-height);
+    background: var(--header-bg);
+}
+
+#logo-container {
+    width: 200px;
+}
+
+#logo {
+    width: 100%;
+}
+
+#content-container {
+    background: var(--content-bg);
+    height: calc(100vh - var(--header-height))
+}
