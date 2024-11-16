@@ -2,11 +2,14 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+}
 
+:root {
     --header-height: 115px;
     --header-bg: white;
     --content-bg: #dbdbdb;
     --card-bg: white;
+    --card-avatar-bg: #808080;
 }
 
 header {
@@ -58,7 +61,7 @@ header {
     justify-content: center;
     width: 128px;
 
-    background: gray;
+    background: var(--card-avatar-bg);
     border-radius: 50%;
 }
 
