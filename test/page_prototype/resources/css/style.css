@@ -4,6 +4,24 @@
     box-sizing: border-box;
 }
 
+/* Open Sans Font loading */
+@font-face {
+    font-family: "Open Sans";
+    src: url(../fonts/OpenSans/OpenSans-VariableFont_wdth\,wght.ttf) format("truetype");
+    font-weight: 300 800;
+    font-stretch: 75% 100%;
+}
+
+@font-face {
+    font-family: "Open Sans";
+    src: url(../fonts/OpenSans/OpenSans-Italic-VariableFont_wdth\,wght.ttf) format("truetype");
+    font-style: italic;
+}
+
+body {
+    font-family: "Open Sans";
+}
+
 :root {
     --header-height: 115px;
     --header-bg: white;
