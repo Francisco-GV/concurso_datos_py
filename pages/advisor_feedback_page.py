@@ -5,13 +5,12 @@ import plotly.express as px
 from data.analysis import advisor_feedback as af
 from data import data_preprocessor as dp
 
-csv_path = "C:\\Dev\\ConcursoDatos\\test\\Satisfacción de servicio para UPG 2024.csv"
-df = dp.load_file(csv_path)
+df = dp.df_global
+
 advisor_df, names_range, questions_range = af.get_advisor_feedback_1_df(df)
 
 questions = af.get_advisor_questions(advisor_df, questions_range)
 names = af.get_advisor_names(advisor_df, names_range)
-
 advisor_df = af.melt(advisor_df, questions, names, "Asesores")
 
 dash.register_page(__name__, title="Asesores", name="Asesores", h1_title="Retroalimentación de Asesores", icon="person-vcard")

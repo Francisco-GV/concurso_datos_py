@@ -2,6 +2,10 @@ import dash
 from dash import html, dcc, Output, Input
 import dash_bootstrap_components as dbc
 
+from data import data_preprocessor
+
+data_preprocessor.load_global_df()
+
 app = dash.Dash(__name__, use_pages=True, external_stylesheets=[
     dbc.themes.BOOTSTRAP,
     "https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css"
