@@ -1,0 +1,42 @@
+/* Open Sans Font loading */
+@font-face {
+    font-family: "Open Sans";
+    src: url(fonts/OpenSans/OpenSans-VariableFont_wdth\,wght.ttf) format("truetype");
+    font-weight: 300 800;
+    font-stretch: 75% 100%;
+}
+
+@font-face {
+    font-family: "Open Sans";
+    src: url(fonts/OpenSans/OpenSans-Italic-VariableFont_wdth\,wght.ttf) format("truetype");
+    font-style: italic;
+}
+
+/* Rounded Elegance Font loading */
+@font-face {
+    font-family: "Rounded Elegance";
+    src: url(fonts/RoundedElegance/Rounded_Elegance.ttf) format("truetype");
+}
+
+body {
+    font-family: "Open Sans";
+}
+
+.sidebar {
+    width: 280px;
+    position: fixed;
+    height: 100vh;
+}
+
+.catch-logo-text {
+    font-family: "Rounded Elegance";
+    font-size: 80px;
+}
+
+.catch-bold {
+    font-weight: bold;
+}
+
+.nav-link.active {
+    background-color: rgb(38, 119, 177) !important;
+}

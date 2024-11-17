@@ -14,7 +14,7 @@ names = af.get_advisor_names(advisor_df, names_range)
 
 advisor_df = af.melt(advisor_df, questions, names, "Asesores")
 
-dash.register_page(__name__)
+dash.register_page(__name__, name="Asesores", icon="person-vcard")
 
 layout = [
     html.H1(children="Asesores", style={"textAlign":"center"}),
