@@ -25,6 +25,8 @@ max_average_score_df = af.get_max_average_score(average_score_df, "Promedio")
 
 dash.register_page(__name__, title="Asesores", name="Asesores", h1_title="Retroalimentación de Asesores", icon="person-vcard")
 
+general_advisor_average_score = int(float(average_score_df['Promedio'].mean()) * 10)
+
 top = dbc.Container(
     [
         dbc.Row(
@@ -96,7 +98,7 @@ top = dbc.Container(
                                 dbc.Col(
                                     html.Div(
                                         html.Img(
-                                            src="assets/images/emotions/feliz.png",
+                                            src=f"assets/images/emotions/{general_advisor_average_score // 10}.png",
                                             alt="emotion",
                                             className="img-fluid",
                                         ),
@@ -109,14 +111,20 @@ top = dbc.Container(
                                     html.Div(
                                         [
                                             html.P(
-                                                "Bueno", className="data-text-important"
+                                                list(af.cuantitative_values.keys())[
+                                                    list(af.cuantitative_values.values()).index(
+                                                        general_advisor_average_score // 10
+                                                    )
+                                                ],
+                                                className="data-text-important",
                                             ),
                                             html.H3(
                                                 "Satisfacción general con los asesores",
                                                 className="data-card-title",
                                             ),
                                             html.P(
-                                                "Puntaje: 80/100", className="data-text"
+                                                f"Puntaje: {general_advisor_average_score}/100",
+                                                className="data-text",
                                             ),
                                         ],
                                         className="info-container",
