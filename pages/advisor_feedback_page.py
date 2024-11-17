@@ -14,6 +14,11 @@ questions = af.get_advisor_questions(advisor_df, questions_range)
 names = af.get_advisor_names(advisor_df, names_range)
 advisor_df = af.melt(advisor_df, questions, names, "Asesores")
 
+participation_count = af.count_participations(advisor_df, "Asesores")
+
+name_max_count = participation_count.idxmax()
+quantity_max_count = participation_count.max()
+
 dash.register_page(__name__, title="Asesores", name="Asesores", h1_title="Retroalimentación de Asesores", icon="person-vcard")
 
 top = dbc.Container(
@@ -28,7 +33,7 @@ top = dbc.Container(
                                 "Número total de registros", className="data-card-title"
                             ),
                         ],
-                        className="data-card h-100",  # h-100 asegura que todas las tarjetas tengan igual altura
+                        className="data-card h-100 d-flex flex-column justify-content-center align-items-center",  # h-100 asegura que todas las tarjetas tengan igual altura
                     ),
                     xs=12,
                     sm=6,
@@ -55,14 +60,14 @@ top = dbc.Container(
                                     html.Div(
                                         [
                                             html.P(
-                                                "50", className="data-text-important"
+                                                quantity_max_count, className="data-text-important"
                                             ),
                                             html.H3(
-                                                "Más asesorías",
+                                                "Más participaciones",
                                                 className="data-card-title",
                                             ),
                                             html.P(
-                                                "Nombre de ejecutivo",
+                                                name_max_count,
                                                 className="data-text",
                                             ),
                                         ],

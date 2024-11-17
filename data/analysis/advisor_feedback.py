@@ -2,6 +2,7 @@ import pandas as pd
 from pandas import DataFrame
 import numpy as np
 
+
 def eval_last(first, last, last_column_type):
     if first is not None and last is not None:
         if last_column_type.startswith("Otro"):
@@ -100,4 +101,8 @@ def count_qualitative_responses(particular_advisor_df, group_column_name, questi
                 .value_counts()
                 .reset_index(name=count_column_name))
     return count_df
+
+
+def count_participations(df_long, key_column_name):
+    return df_long[key_column_name].value_counts()
 
