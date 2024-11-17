@@ -19,6 +19,10 @@ participation_count = af.count_participations(advisor_df, "Asesores")
 name_max_count = participation_count.idxmax()
 quantity_max_count = participation_count.max()
 
+cuantitative_df = af.convert_qualitative_to_cuantitative(advisor_df, questions)
+average_score_df = af.get_average_score(cuantitative_df, questions, "Asesores", "Promedio")
+max_average_score_df = af.get_max_average_score(average_score_df, "Promedio")
+
 dash.register_page(__name__, title="Asesores", name="Asesores", h1_title="Retroalimentación de Asesores", icon="person-vcard")
 
 top = dbc.Container(
@@ -149,16 +153,19 @@ top = dbc.Container(
                                     html.Div(
                                         [
                                             html.P(
-                                                "80%", className="data-text-important"
+                                                str(int(max_average_score_df["Promedio"].iloc[0] * 10)) + "%", className="data-text-important"
                                             ),
                                             html.H3(
                                                 "Mejor rendimiento",
                                                 className="data-card-title",
                                             ),
-                                            html.P(
-                                                "Nombre de ejecutivo",
-                                                className="data-text",
-                                            ),
+                                            html.Div([
+                                                html.P(
+                                                    name,
+                                                    className="data-text",
+                                                )
+                                                for name in max_average_score_df["Asesores"].to_list()
+                                            ]),
                                         ],
                                         className="info-container",
                                     ),

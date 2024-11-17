@@ -3,6 +3,18 @@ from pandas import DataFrame
 import numpy as np
 
 
+cuantitative_values = {
+    "Pésimo": 3,
+    "Muy Malo": 4,
+    "Malo": 5,
+    "Regular - Malo": 6,
+    "Regular - Bueno": 7,
+    "Bueno": 8,
+    "Muy Bueno": 9,
+    "Excelente": 10
+}
+
+
 def eval_last(first, last, last_column_type):
     if first is not None and last is not None:
         if last_column_type.startswith("Otro"):
@@ -105,4 +117,22 @@ def count_qualitative_responses(particular_advisor_df, group_column_name, questi
 
 def count_participations(df_long, key_column_name):
     return df_long[key_column_name].value_counts()
+
+
+def convert_qualitative_to_cuantitative(df_long, columns):
+    df_long[columns] = df_long[columns].replace(cuantitative_values)
+    return df_long
+
+
+def get_average_score(cuantitative_df, columns, key_column_name, average_column_name):
+    cuantitative_df[average_column_name] = cuantitative_df.loc[:, columns].mean(axis=1)
+    average_score_df = cuantitative_df.groupby(key_column_name)[average_column_name].mean().reset_index()
+
+    return average_score_df
+
+
+def get_max_average_score(average_score_df, column_name):
+    max_average = average_score_df[column_name].max()
+    max_average_df = average_score_df.loc[average_score_df[column_name] == max_average]
+    return max_average_df
 

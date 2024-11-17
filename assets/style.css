@@ -28,6 +28,7 @@
 
 body {
     font-family: "Open Sans";
+    font-size: 16px;
 }
 
 .sidebar {
@@ -65,12 +66,17 @@ body {
 
 .data-card-title {
     font-weight: 500;
-    font-size: 1.25em;
+    font-size: 1.1em;
+}
+
+.data-text {
+    font-size: 1em;
+    margin: 0;
 }
 
 .data-text-important {
-    font-size: 3.5em;
-    font-weight: 650;
+    font-size: 3em;
+    font-weight: 600;
     color: var(--primary-color, #000); /* Use Bootstrap primary color if available */
 }
 
