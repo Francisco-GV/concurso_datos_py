@@ -18,6 +18,14 @@
     src: url(fonts/RoundedElegance/Rounded_Elegance.ttf) format("truetype");
 }
 
+:root {
+    --header-height: 115px;
+    --header-bg: white;
+    --content-bg: #dbdbdb;
+    --card-bg: white;
+    --card-avatar-bg: #808080;
+}
+
 body {
     font-family: "Open Sans";
 }
@@ -39,4 +47,62 @@ body {
 
 .nav-link.active {
     background-color: rgb(38, 119, 177) !important;
+}
+
+.data-card {
+    background: var(--card-bg, #ffffff); /* Fallback to white if variable is undefined */
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    text-align: center;
+}
+
+.data-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+.data-card-title {
+    font-weight: 500;
+    font-size: 1.25em;
+}
+
+.data-text-important {
+    font-size: 3.5em;
+    font-weight: 650;
+    color: var(--primary-color, #000); /* Use Bootstrap primary color if available */
+}
+
+.info-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.avatar-container img,
+.icon-container img {
+    width: 100%;
+    max-width: 128px;
+    max-height: 128px;
+}
+
+.icon-container {
+    justify-content: center;
+    width: 96px;
+    height: 96px;
+    overflow: hidden;
+}
+
+.avatar-container {
+    background: var(--card-avatar-bg, #f0f0f0);
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+@media (max-width: 768px) {
+    .data-card {
+        text-align: center;
+    }
 }
