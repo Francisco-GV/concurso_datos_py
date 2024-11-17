@@ -14,10 +14,9 @@ names = af.get_advisor_names(advisor_df, names_range)
 
 advisor_df = af.melt(advisor_df, questions, names, "Asesores")
 
-dash.register_page(__name__, name="Asesores", icon="person-vcard")
+dash.register_page(__name__, title="Asesores", name="Asesores", h1_title="Retroalimentación de Asesores", icon="person-vcard")
 
 layout = [
-    html.H1(children="Asesores", style={"textAlign":"center"}),
     dcc.Dropdown(questions, questions[0], id="dropdown-questions"),
     dcc.Dropdown(names, names[0], id="dropdown-names"),
     dcc.Graph(id="graph-content")

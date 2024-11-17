@@ -1,5 +1,5 @@
 import dash
-from dash import html
+from dash import html, dcc, Output, Input
 import dash_bootstrap_components as dbc
 
 app = dash.Dash(__name__, use_pages=True, external_stylesheets=[
@@ -73,9 +73,13 @@ footer = html.Footer(
 # Layout
 app.layout = html.Div(
     [
+        dcc.Location(id="url", refresh=False),
         sidebar,
         html.Div(
             [
+                html.Div([
+                    html.H1("Dashboard", id="page-title")
+                ]),
                 dash.page_container,  # Placeholder for page content
                 footer
             ],
@@ -85,6 +89,18 @@ app.layout = html.Div(
     ],
     className="d-flex"
 )
+
+
+@app.callback(
+        Output("page-title", "children"),
+        Input("url", "pathname")
+)
+def update_title(pathname):
+    if pathname == "/":
+        page = dash.page_registry.get("pages.home", {})
+    else:
+        page = dash.page_registry.get("pages." + pathname.strip("/").replace("-", "_"), {})
+    return page.get("h1_title", "Dashboard")
 
 if __name__ == "__main__":
     app.run(debug=True)
