@@ -196,12 +196,25 @@ top = dbc.Container(
     fluid=True,
 )
 
+
+def create_average_score_graph():
+    fig = px.bar(average_score_df.sort_values(by=["Promedio"], ascending=False), x="Asesores", y="Promedio")
+
+    min = average_score_df["Promedio"].min()
+    min = min - 1 if min - 1 >= 0 else 0
+
+    fig.update_layout(yaxis=dict(range=[min, 10]))
+    return fig
+
+
 layout = [
     top,
+    dcc.Graph(figure=create_average_score_graph()),
     dcc.Dropdown(questions, questions[0], id="dropdown-questions"),
     dcc.Dropdown(names, names[0], id="dropdown-names"),
     dcc.Graph(id="graph-content")
 ]
+
 
 @callback(
     Output("graph-content", "figure"),
