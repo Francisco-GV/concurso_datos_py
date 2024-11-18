@@ -120,8 +120,9 @@ def count_participations(df_long, key_column_name):
 
 
 def convert_qualitative_to_cuantitative(df_long, columns):
-    df_long[columns] = df_long[columns].replace(cuantitative_values)
-    return df_long
+    df_copy = df_long.copy()
+    df_copy[columns] = df_copy[columns].map(cuantitative_values.get)
+    return df_copy
 
 
 def get_average_score(cuantitative_df, columns, key_column_name, average_column_name):
