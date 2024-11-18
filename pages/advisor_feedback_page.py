@@ -24,7 +24,7 @@ cuantitative_df = af.convert_qualitative_to_cuantitative(advisor_df, questions)
 average_score_df = af.get_average_score(cuantitative_df, questions, "Asesores", "Promedio")
 max_average_score_df = af.get_max_average_score(average_score_df, "Promedio")
 
-dash.register_page(__name__, title="Asesores", name="Asesores", h1_title="Retroalimentación de Asesores", icon="person-vcard")
+dash.register_page(__name__, title="Nivel de atención", name="Nivel de atención", h1_title="Análisis de nivel de atención", icon="person-vcard")
 
 general_advisor_average_score = int(float(average_score_df['Promedio'].mean()) * 10)
 
@@ -248,22 +248,7 @@ layout = [
         dbc.Row(left_filter_column),
         dbc.Row(dcc.Graph(id="advisor-graph"))
     ]),
-    dcc.Dropdown(questions, questions[0], id="dropdown-questions"),
-    dcc.Dropdown(names, names[0], id="dropdown-names"),
-    dcc.Graph(id="graph-content")
 ]
-
-
-@callback(
-    Output("graph-content", "figure"),
-    [Input("dropdown-questions", "value"), Input("dropdown-names", "value")]
-)
-def update_graph(question, name):
-    count_column_name = "Conteo"
-
-    dff = advisor_df.loc[advisor_df.Asesores==name, ["Asesores", question]]
-    dff = af.count_qualitative_responses(dff, "Asesores", question, count_column_name)
-    return px.bar(dff, x=question, y=count_column_name)
 
 
 @callback(
