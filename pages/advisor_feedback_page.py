@@ -1,6 +1,7 @@
 import dash
 from dash import html, dcc, callback, Output, Input
 import plotly.express as px
+import plotly.graph_objects as go
 import dash_bootstrap_components as dbc
 
 from data.analysis import advisor_feedback as af
@@ -196,6 +197,11 @@ top = dbc.Container(
     fluid=True,
 )
 
+left_filter_column = dbc.Container([
+    html.Label("Selecciona un asesor"),
+    dcc.Dropdown(names, names[0], id="advisor-dropdown", clearable=False),
+    html.Hr()
+])
 
 def create_average_score_graph():
     title = "Promedio de satisfacción por asesor"
@@ -238,6 +244,10 @@ layout = [
         dbc.Col(dcc.Graph(figure=create_average_score_graph())),
         dbc.Col(dcc.Graph(figure=create_participation_count_graph()))
     ]),
+    dbc.Row([
+        dbc.Col(left_filter_column),
+        dbc.Col(dcc.Graph(id="advisor-graph"))
+    ]),
     dcc.Dropdown(questions, questions[0], id="dropdown-questions"),
     dcc.Dropdown(names, names[0], id="dropdown-names"),
     dcc.Graph(id="graph-content")
@@ -254,3 +264,21 @@ def update_graph(question, name):
     dff = advisor_df.loc[advisor_df.Asesores==name, ["Asesores", question]]
     dff = af.count_qualitative_responses(dff, "Asesores", question, count_column_name)
     return px.bar(dff, x=question, y=count_column_name)
+
+
+@callback(
+        Output("advisor-graph", "figure"),
+        Input("advisor-dropdown", "value")
+)
+def update_advisor_graph(name):
+    title = f"Distribución de puntuación de {name} por pregunta"
+    dff = advisor_df.loc[advisor_df["Asesores"] == name]
+
+    df_melted = dff.melt(id_vars="Asesores", value_vars=questions, var_name="Pregunta", value_name="Puntuación")
+    df_melted = df_melted.dropna(subset=["Puntuación"])
+
+    df_counts = df_melted.groupby(["Pregunta", "Puntuación"]).size().reset_index(name="Conteo")
+
+    return px.bar(df_counts, x="Conteo", y="Pregunta", color="Puntuación", orientation="h",
+                  title=title)
+
