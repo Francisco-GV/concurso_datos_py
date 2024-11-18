@@ -278,7 +278,11 @@ def update_advisor_graph(name):
     df_melted = df_melted.dropna(subset=["Puntuación"])
 
     df_counts = df_melted.groupby(["Pregunta", "Puntuación"]).size().reset_index(name="Conteo")
+    df_counts["valor_cuantitativo"] = df_counts["Puntuación"].map(af.cuantitative_values)
+    df_counts["porcentaje"] = df_counts.groupby("Pregunta")["Conteo"].transform(lambda x: x / x.sum() * 100)
 
-    return px.bar(df_counts, x="Conteo", y="Pregunta", color="Puntuación", orientation="h",
+    df_counts = df_counts.sort_values(by="valor_cuantitativo", ascending=False)
+
+    return px.bar(df_counts, x="porcentaje", y="Pregunta", color="Puntuación", orientation="h",
                   title=title)
 
