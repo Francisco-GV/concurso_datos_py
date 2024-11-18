@@ -207,9 +207,25 @@ def create_average_score_graph():
     return fig
 
 
+def create_participation_count_graph():
+    sorted_series = participation_count.sort_values(ascending=False)
+    fig = px.bar(sorted_series, x=sorted_series.index, y=sorted_series.values)
+
+    max_participation = participation_count.max()
+    min_participation = participation_count.min()
+
+    min = min_participation - 1 if min_participation - 1 >= 0 else 0
+
+    fig.update_layout(yaxis=dict(range=[min, max_participation]))
+    return fig
+
+
 layout = [
     top,
-    dcc.Graph(figure=create_average_score_graph()),
+    dbc.Row([
+        dbc.Col(dcc.Graph(figure=create_average_score_graph())),
+        dbc.Col(dcc.Graph(figure=create_participation_count_graph()))
+    ]),
     dcc.Dropdown(questions, questions[0], id="dropdown-questions"),
     dcc.Dropdown(names, names[0], id="dropdown-names"),
     dcc.Graph(id="graph-content")
