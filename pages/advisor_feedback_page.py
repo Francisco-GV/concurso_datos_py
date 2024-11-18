@@ -245,8 +245,8 @@ layout = [
         dbc.Col(dcc.Graph(figure=create_participation_count_graph()))
     ]),
     dbc.Row([
-        dbc.Col(left_filter_column),
-        dbc.Col(dcc.Graph(id="advisor-graph"))
+        dbc.Row(left_filter_column),
+        dbc.Row(dcc.Graph(id="advisor-graph"))
     ]),
     dcc.Dropdown(questions, questions[0], id="dropdown-questions"),
     dcc.Dropdown(names, names[0], id="dropdown-names"),
@@ -283,6 +283,23 @@ def update_advisor_graph(name):
 
     df_counts = df_counts.sort_values(by="valor_cuantitativo", ascending=False)
 
-    return px.bar(df_counts, x="porcentaje", y="Pregunta", color="Puntuación", orientation="h",
-                  title=title)
+    fig =  px.bar(df_counts, x="porcentaje", y="Pregunta", color="Puntuación", orientation="h",
+                  text="Conteo", title=title)
 
+    fig.update_traces(textposition="inside", textfont_size=16)
+    fig.update_layout(
+        xaxis=dict(ticksuffix="%"),
+        legend=dict(
+            orientation="h",
+            yanchor="bottom",
+            y=-0.25,
+            xanchor="center",
+            x=0.5,
+            traceorder="normal",
+        ),
+        yaxis_title=None,
+        xaxis_title=None,
+        legend_title_text=None
+    )
+
+    return fig
