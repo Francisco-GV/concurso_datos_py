@@ -13,7 +13,7 @@ advisor_df, names_range, questions_range = af.get_advisor_feedback_1_df(df)
 
 questions = af.get_advisor_questions(advisor_df, questions_range)
 names = af.get_advisor_names(advisor_df, names_range)
-advisor_df = af.melt(advisor_df, questions, names, "Asesores")
+advisor_df = af.melt(advisor_df, questions + af.extra_questions, names, "Asesores")
 
 participation_count = af.count_participations(advisor_df, "Asesores")
 
@@ -238,9 +238,20 @@ def create_participation_count_graph():
     return fig
 
 
+def create_question_pie_chart(title, question):
+    count_df = advisor_df[question].value_counts().reset_index()
+    count_df.columns = ["Respuesta", "Conteo"]
+
+    fig = px.pie(count_df, values="Conteo", names="Respuesta", title=title)
+
+    return fig
+
+
 layout = [
     top,
     dbc.Row([
+        dbc.Col(dcc.Graph(figure=create_question_pie_chart("Porcentaje de clientes que contratarían nuevamente el servicio", af.extra_questions[0]))),
+        dbc.Col(dcc.Graph(figure=create_question_pie_chart("Porcentaje de clientes que recomendarían el servicio", af.extra_questions[1]))),
         dbc.Col(dcc.Graph(figure=create_average_score_graph())),
         dbc.Col(dcc.Graph(figure=create_participation_count_graph()))
     ]),
