@@ -15,6 +15,13 @@ cuantitative_values = {
 }
 
 
+extra_questions = [
+    "¿Contratarías nuevamente nuestros servicios?",
+    "¿Recomendarías nuestros servicios?",
+    "¿Existe algo que podría ayudarnos a mejorar nuestro servicio?"
+]
+
+
 def eval_last(first, last, last_column_type):
     if first is not None and last is not None:
         if last_column_type.startswith("Otro"):
@@ -74,7 +81,12 @@ def get_advisor_feedback_1_df(df):
 
     advisor_names = advisor_df.iloc[0]
     advisor_df.columns = advisor_names
-    advisor_df = advisor_df.drop([0]).reset_index(drop=True).replace("", np.nan)
+    advisor_df = advisor_df.drop([0])
+
+    extra_questions_df = df.loc[1:, extra_questions]
+    advisor_df = pd.concat([advisor_df, extra_questions_df], axis=1)
+
+    advisor_df = advisor_df.reset_index(drop=True).replace("", np.nan)
 
     return advisor_df, (first1, last1), (first2, last2)
 
