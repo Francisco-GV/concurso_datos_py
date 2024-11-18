@@ -198,7 +198,13 @@ top = dbc.Container(
 
 
 def create_average_score_graph():
-    fig = px.bar(average_score_df.sort_values(by=["Promedio"], ascending=False), x="Asesores", y="Promedio")
+    title = "Promedio de satisfacción por asesor"
+    fig = px.bar(
+        average_score_df.sort_values(by=["Promedio"], ascending=False),
+        x="Asesores",
+        y="Promedio",
+        title=title,
+    )
 
     min = average_score_df["Promedio"].min()
     min = min - 1 if min - 1 >= 0 else 0
@@ -208,8 +214,14 @@ def create_average_score_graph():
 
 
 def create_participation_count_graph():
+    title = "Conteo de participación por asesor"
     sorted_series = participation_count.sort_values(ascending=False)
-    fig = px.bar(sorted_series, x=sorted_series.index, y=sorted_series.values)
+    fig = px.bar(
+        sorted_series,
+        x=sorted_series.index,
+        y=sorted_series.values,
+        title=title
+    )
 
     max_participation = participation_count.max()
     min_participation = participation_count.min()
