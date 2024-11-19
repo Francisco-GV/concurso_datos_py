@@ -30,9 +30,39 @@ general_advisor_average_score = int(float(average_score_df['Promedio'].mean()) *
 record_number = g.get_row_number(df) - 1 # The first row is column info
 
 
+def insert_line_breaks(text, max_length, line_break_char):
+    words = text.split()
+    result = ""
+    current_length = 0
+    for word in words:
+        if current_length + len(word) + 1 > max_length:
+            result += line_break_char + word
+            current_length = len(word)
+        elif result:
+            result += " " + word
+            current_length += len(word) + 1
+        else:
+            result = word
+            current_length = len(word)
+
+    return result
+
+
 def create_type_service_pie_chart():
     title = "Servicios brindados"
-    fig = px.pie(g.count_service_type(df), values="Conteo", names="Servicio", title=title)
+    count_df = g.count_service_type(df)
+    count_df['Servicio'] = count_df['Servicio'].apply(lambda x: insert_line_breaks(x, 20, "<br>"))
+    fig = px.pie(count_df, values="Conteo", names="Servicio", title=title)
+
+    return fig
+
+
+def create_recomendation_pie_chart():
+    title = "Clientes que recomendarían el servicio"
+    count_df = advisor_df[af.extra_questions[0]].value_counts().reset_index()
+    count_df.columns = ["Respuesta", "Conteo"]
+
+    fig = px.pie(count_df, values="Conteo", names="Respuesta", title=title)
 
     return fig
 
@@ -131,7 +161,8 @@ layout = html.Div(
                 ),
                 dbc.Row(
                     [
-                        dbc.Col([dcc.Graph(figure=create_type_service_pie_chart())])
+                        dbc.Col([dcc.Graph(figure=create_type_service_pie_chart())]),
+                        dbc.Col([dcc.Graph(figure=create_recomendation_pie_chart())]),
                     ]
                 )
             ]
