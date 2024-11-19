@@ -29,6 +29,14 @@ general_advisor_average_score = int(float(average_score_df['Promedio'].mean()) *
 
 record_number = g.get_row_number(df) - 1 # The first row is column info
 
+
+def create_type_service_pie_chart():
+    title = "Servicios brindados"
+    fig = px.pie(g.count_service_type(df), values="Conteo", names="Servicio", title=title)
+
+    return fig
+
+
 dash.register_page(__name__, title="Inicio", path="/", name="Inicio", h1_title="General", icon="house")
 
 layout = html.Div(
@@ -119,6 +127,11 @@ layout = html.Div(
                                 ),
                             ]
                         ),
+                    ]
+                ),
+                dbc.Row(
+                    [
+                        dbc.Col([dcc.Graph(figure=create_type_service_pie_chart())])
                     ]
                 )
             ]
