@@ -34,21 +34,6 @@ top = dbc.Container(
             [
                 dbc.Col(
                     dbc.Card(
-                        [
-                            html.P("200", className="data-text-important"),
-                            html.H3(
-                                "Número total de registros", className="data-card-title"
-                            ),
-                        ],
-                        className="data-card h-100 d-flex flex-column justify-content-center align-items-center",  # h-100 asegura que todas las tarjetas tengan igual altura
-                    ),
-                    xs=12,
-                    sm=6,
-                    md=4,
-                    lg=3
-                ),
-                dbc.Col(
-                    dbc.Card(
                         dbc.Row(
                             [
                                 dbc.Col(
@@ -87,10 +72,6 @@ top = dbc.Container(
                         ),
                         className="data-card data-card-horizontal h-100",
                     ),
-                    xs=12,
-                    sm=6,
-                    md=4,
-                    lg=3
                 ),
                 dbc.Col(
                     dbc.Card(
@@ -137,10 +118,6 @@ top = dbc.Container(
                         ),
                         className="data-card data-card-horizontal h-100",
                     ),
-                    xs=12,
-                    sm=6,
-                    md=4,
-                    lg=3
                 ),
                 dbc.Col(
                     dbc.Card(
@@ -185,10 +162,6 @@ top = dbc.Container(
                         ),
                         className="data-card data-card-horizontal h-100",
                     ),
-                    xs=12,
-                    sm=6,
-                    md=4,
-                    lg=3
                 ),
             ],
             className="g-4 align-items-stretch",  # align-items-stretch para alinear alturas
