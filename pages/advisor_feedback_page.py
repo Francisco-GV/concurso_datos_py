@@ -1,7 +1,6 @@
 import dash
 from dash import html, dcc, callback, Output, Input
 import plotly.express as px
-import plotly.graph_objects as go
 import dash_bootstrap_components as dbc
 
 from data.analysis import advisor_feedback as af
