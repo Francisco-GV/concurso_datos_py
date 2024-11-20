@@ -63,6 +63,12 @@ def get_column_range(df: DataFrame, column_name: str, get_consecutive_related_qu
     return None
 
 
+def convert_first_row_to_column(df):
+    first_row = df.iloc[0]
+    df.columns = first_row
+    return df.drop(0)
+
+
 def get_advisor_feedback_1_df(df):
     result = get_column_range(df, "Por favor, seleccione el o los ejecutivos que les asesoran", True)
 
@@ -77,11 +83,10 @@ def get_advisor_feedback_1_df(df):
     first2 = df_questions[first2].values[0]
     last2 = df_questions[last2].values[0]
 
-    advisor_df = pd.concat([df_options, df_questions], axis=1)
+    df_options = convert_first_row_to_column(df_options)
+    df_questions = convert_first_row_to_column(df_questions)
 
-    advisor_names = advisor_df.iloc[0]
-    advisor_df.columns = advisor_names
-    advisor_df = advisor_df.drop([0])
+    advisor_df = pd.concat([df_options, df_questions], axis=1)
 
     extra_questions_df = df.loc[1:, extra_questions]
     advisor_df = pd.concat([advisor_df, extra_questions_df], axis=1)
