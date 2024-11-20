@@ -5,6 +5,8 @@ import plotly.express as px
 import dash_bootstrap_components as dbc
 import plotly.graph_objs as go
 
+import nltk
+
 from data.analysis import advisor_feedback as af
 from data import data_preprocessor as dp
 
@@ -290,7 +292,7 @@ def update_advisor_suggestions_wordcloud(name):
     text_list = list(particular_advisor_df["¿Existe algo que podría ayudarnos a mejorar nuestro servicio?"].dropna().values)
     text = " ".join(text_list)
 
-    wordcloud = WordCloud()
+    wordcloud = WordCloud(stopwords=set(nltk.corpus.stopwords.words('spanish')), max_words=100, max_font_size=90)
     wordcloud.generate(text)
 
     word_list = []
