@@ -1,6 +1,8 @@
+from matplotlib import axis
 import pandas as pd
 from pandas import DataFrame
 import numpy as np
+import difflib
 
 
 cuantitative_values = {
@@ -69,7 +71,31 @@ def convert_first_row_to_column(df):
     return df.drop(0)
 
 
-def get_advisor_feedback_1_df(df):
+def find_similar_words(word, words_to_compare, cutoff=0.5):
+    matches = difflib.get_close_matches(word, words_to_compare, cutoff=cutoff)
+    return matches if matches else None
+
+
+def remove_column_other(row, df, options, column_other_name):
+    value_other = row[column_other_name]
+    if pd.notna(value_other):
+        similar_names = find_similar_words(value_other, options)
+
+        if similar_names is not None:
+            for similar_name in similar_names:
+                row[similar_name] = similar_name
+        else:
+            new_column_name = value_other
+            if new_column_name not in df.columns:
+                index_other = df.columns.get_loc(column_other_name)
+                df.insert(index_other, new_column_name, pd.NA)
+                options.append(new_column_name)
+            row[new_column_name] = new_column_name
+
+    return row
+
+
+def get_advisor_feedback_1_df(df, remove_other_names_column=True):
     result = get_column_range(df, "Por favor, seleccione el o los ejecutivos que les asesoran", True)
 
     first1, last1 = result["multiple_selection"]
@@ -85,6 +111,17 @@ def get_advisor_feedback_1_df(df):
 
     df_options = convert_first_row_to_column(df_options)
     df_questions = convert_first_row_to_column(df_questions)
+
+    if remove_other_names_column:
+        column_other_name = "Otro (especifique)"
+        names = get_advisor_names(df_options, (first1, last1))
+
+        df_options = df_options.apply(lambda x: remove_column_other(x, df_options, names, column_other_name), axis=1)
+
+        names.remove(column_other_name)
+        df_options = df_options.drop(columns=[column_other_name])
+        df_options = df_options[names]
+        last1 = names[-1]
 
     advisor_df = pd.concat([df_options, df_questions], axis=1)
 
