@@ -164,7 +164,7 @@ def update_date(start_date, end_date):
         else true
     )
     condicion2 = (
-        (df["date_created"] <= pd.to_datetime(end_date_object))
+        (df["date_created"].dt.date <= pd.to_datetime(end_date_object).date())
         if start_date_object is not None
         else true
     )
