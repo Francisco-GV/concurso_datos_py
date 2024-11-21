@@ -2,11 +2,18 @@ import dash
 from dash import html, dcc, Output, Input
 import dash_bootstrap_components as dbc
 
-from data import data_preprocessor
+from data import data_preprocessor as dp
 
 from datetime import date
 
-data_preprocessor.load_global_df()
+dp.load_global_df()
+
+min_date = dp.df_global["date_created"].min().date()
+max_date = dp.df_global["date_created"].max().date()
+
+print(min_date)
+print(max_date)
+
 
 app = dash.Dash(__name__, use_pages=True, external_stylesheets=[
     dbc.themes.BOOTSTRAP,
@@ -88,10 +95,11 @@ app.layout = html.Div(
                         html.H1("Dashboard", id="page-title"),
                         html.Div([
                             dcc.DatePickerRange(id="date-picker-range",
-                                                min_date_allowed=date(2000, 1, 1),
-                                                max_date_allowed=date.today(),
-                                                initial_visible_month=date.today(),
-                                                end_date=date.today(),
+                                                min_date_allowed=min_date,
+                                                max_date_allowed=max_date,
+                                                initial_visible_month=max_date,
+                                                start_date=min_date,
+                                                end_date=max_date,
                                                 display_format="D/M/Y",
                                                 minimum_nights=0)
                         ], className="date-picker-container"),
