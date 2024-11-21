@@ -304,6 +304,9 @@ def update_advisor_graphs(advisors_data, questions, name):
 
 
 def create_wordcloud_figure(text):
+    if len(text) == 0:
+        return {}
+
     wordcloud = WordCloud(stopwords=set(nltk.corpus.stopwords.words('spanish')), max_words=100, max_font_size=90)
     wordcloud.generate(text)
 
