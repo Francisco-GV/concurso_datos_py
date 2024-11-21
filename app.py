@@ -3,6 +3,7 @@ from dash import html, dcc, Output, Input
 import dash_bootstrap_components as dbc
 
 from data import data_preprocessor as dp
+import pandas as pd
 
 from datetime import date
 
@@ -111,7 +112,8 @@ app.layout = html.Div(
             ],
             className="content p-4",
             style={"width": "100%", "marginLeft": "280px"}
-        )
+        ),
+        dcc.Store(id="filtered-date-df")
     ],
     className="d-flex"
 )
@@ -131,13 +133,14 @@ def update_title(pathname):
 
 @app.callback(
         Output("output-date-picker-range", "children"),
+        Output("filtered-date-df", "data"),
         Input("date-picker-range", "start_date"),
         Input("date-picker-range", "end_date"),
 )
 def update_date(start_date, end_date):
-    print(f"Date selected: {start_date} - {end_date}")
-
     text_output = ""
+    start_date_object = None
+    end_date_object = None
 
     if start_date is not None and start_date != end_date:
         start_date_object = date.fromisoformat(start_date)
@@ -151,10 +154,27 @@ def update_date(start_date, end_date):
 
         text_output += end_date_string
 
+    df = dp.df_global
 
-    print(f"text output: {text_output}")
+    true = pd.Series([True] * len(df))
 
-    return text_output
+    condicion1 = (
+        (df["date_created"] >= pd.to_datetime(start_date_object))
+        if start_date_object is not None
+        else true
+    )
+    condicion2 = (
+        (df["date_created"] <= pd.to_datetime(end_date_object))
+        if start_date_object is not None
+        else true
+    )
+
+    filtered_date_df = dp.df_global[condicion1 & condicion2]
+    first_row = df.iloc[[0]]
+
+    final_df = pd.concat([first_row, filtered_date_df])
+
+    return text_output, final_df.to_json()
 
 
 if __name__ == "__main__":
