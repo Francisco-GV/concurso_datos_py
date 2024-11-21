@@ -92,7 +92,8 @@ app.layout = html.Div(
                                                 max_date_allowed=date.today(),
                                                 initial_visible_month=date.today(),
                                                 end_date=date.today(),
-                                                display_format="D/M/Y")
+                                                display_format="D/M/Y",
+                                                minimum_nights=0)
                         ], className="date-picker-container"),
                     ], id="title-container"),
                     html.P(id="output-date-picker-range"),
@@ -130,7 +131,7 @@ def update_date(start_date, end_date):
 
     text_output = ""
 
-    if start_date is not None:
+    if start_date is not None and start_date != end_date:
         start_date_object = date.fromisoformat(start_date)
         start_date_string = start_date_object.strftime('%d/%b/%y')
 
