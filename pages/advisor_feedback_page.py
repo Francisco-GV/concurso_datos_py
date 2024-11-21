@@ -9,6 +9,7 @@ import plotly.graph_objs as go
 import nltk
 
 from data.analysis import advisor_feedback as af
+from util import graph_creator as gc
 
 
 dash.register_page(__name__, title="Nivel de atención", name="Nivel de atención", h1_title="Análisis de nivel de atención", icon="person-vcard")
@@ -75,11 +76,11 @@ def create_advisors_data(filtered_date_data):
         for name in max_average_score_df["Asesores"].to_list()
     ]
 
-    average_score_graph = create_average_score_graph(average_score_df)
-    participation_count_graph = create_participation_count_graph(participation_count)
+    average_score_graph = gc.create_average_score_graph(average_score_df)
+    participation_count_graph = gc.create_participation_count_graph(participation_count)
 
-    clients_again_chart = create_question_pie_chart(advisors_df, "Porcentaje de clientes que contratarían nuevamente el servicio", af.extra_questions[0])
-    clients_recommend_chart = create_question_pie_chart(advisors_df, "Porcentaje de clientes que recomendarían el servicio", af.extra_questions[1])
+    clients_again_chart = gc.create_question_pie_chart(advisors_df, "Porcentaje de clientes que contratarían nuevamente el servicio", af.extra_questions[0])
+    clients_recommend_chart = gc.create_question_pie_chart(advisors_df, "Porcentaje de clientes que recomendarían el servicio", af.extra_questions[1])
 
     return (
         advisors_df.to_json(date_format='iso', orient='split'),
@@ -228,49 +229,6 @@ left_filter_column = dbc.Container([
     dcc.Dropdown(id="advisor-dropdown", clearable=False),
     html.Hr()
 ])
-
-def create_average_score_graph(average_score_df):
-    title = "Promedio de satisfacción por asesor"
-    fig = px.bar(
-        average_score_df.sort_values(by=["Promedio"], ascending=False),
-        x="Asesores",
-        y="Promedio",
-        title=title,
-    )
-
-    min = average_score_df["Promedio"].min()
-    min = min - 1 if min - 1 >= 0 else 0
-
-    fig.update_layout(yaxis=dict(range=[min, 10]))
-    return fig
-
-
-def create_participation_count_graph(participation_count):
-    title = "Conteo de participación por asesor"
-    sorted_series = participation_count.sort_values(ascending=False)
-    fig = px.bar(
-        sorted_series,
-        x=sorted_series.index,
-        y=sorted_series.values,
-        title=title
-    )
-
-    max_participation = participation_count.max()
-    min_participation = participation_count.min()
-
-    min = min_participation - 1 if min_participation - 1 >= 0 else 0
-
-    fig.update_layout(yaxis=dict(range=[min, max_participation]))
-    return fig
-
-
-def create_question_pie_chart(advisor_df, title, question):
-    count_df = advisor_df[question].value_counts().reset_index()
-    count_df.columns = ["Respuesta", "Conteo"]
-
-    fig = px.pie(count_df, values="Conteo", names="Respuesta", title=title)
-
-    return fig
 
 
 layout = [
