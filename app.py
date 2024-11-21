@@ -174,7 +174,7 @@ def update_date(start_date, end_date):
 
     final_df = pd.concat([first_row, filtered_date_df])
 
-    return text_output, final_df.to_json()
+    return text_output, final_df.to_json(date_format='iso', orient='split')
 
 
 if __name__ == "__main__":
