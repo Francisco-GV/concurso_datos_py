@@ -1,5 +1,6 @@
 import dash
-from dash import html, dcc, callback, Output, Input
+from dash import html, dcc, callback, Output, Input, State
+import pandas as pd
 from wordcloud import WordCloud
 import plotly.express as px
 import dash_bootstrap_components as dbc
@@ -8,28 +9,96 @@ import plotly.graph_objs as go
 import nltk
 
 from data.analysis import advisor_feedback as af
-from data import data_preprocessor as dp
 
-df = dp.df_global
-
-advisor_df, names_range, questions_range = af.get_advisor_feedback_1_df(df)
-
-questions = af.get_advisor_questions(advisor_df, questions_range)
-names = af.get_advisor_names(advisor_df, names_range)
-advisor_df = af.melt(advisor_df, questions + af.extra_questions, names, "Asesores")
-
-participation_count = af.count_participations(advisor_df, "Asesores")
-
-name_max_count = participation_count.idxmax()
-quantity_max_count = participation_count.max()
-
-cuantitative_df = af.convert_qualitative_to_cuantitative(advisor_df, questions)
-average_score_df = af.get_average_score(cuantitative_df, questions, "Asesores", "Promedio")
-max_average_score_df = af.get_max_average_score(average_score_df, "Promedio")
 
 dash.register_page(__name__, title="Nivel de atención", name="Nivel de atención", h1_title="Análisis de nivel de atención", icon="person-vcard")
 
-general_advisor_average_score = int(float(average_score_df['Promedio'].mean()) * 10)
+
+def data_to_df(data):
+    if data is None:
+        raise dash.exceptions.PreventUpdate
+    return pd.read_json(data, orient="split")
+
+
+@callback(
+    Output("advisors-data", "data"),
+    Output("advisors-questions", "data"),
+    Output("advisor-dropdown", "options"),
+    Output("advisor-dropdown", "value"),
+    Output("more-participations-count", "children"),
+    Output("more-participations-name", "children"),
+    Output("average-score-img", "src"),
+    Output("average-score-qualitative-title", "children"),
+    Output("average-score-value", "children"),
+    Output("max-average-score-value", "children"),
+    Output("max-average-score-names", "children"),
+    Output("average-score-graph", "figure"),
+    Output("participation-count-graph", "figure"),
+    Output("clients-again-pie-chart", "figure"),
+    Output("clients-recommend-pie-chart", "figure"),
+    Input("filtered-date-df", "data")
+)
+def create_advisors_data(filtered_date_data):
+    df = data_to_df(filtered_date_data)
+
+    advisors_df, names_range, questions_range = af.get_advisor_feedback_1_df(df)
+    questions = af.get_advisor_questions(advisors_df, questions_range)
+    names = af.get_advisor_names(advisors_df, names_range)
+    advisors_df = af.melt(advisors_df, questions + af.extra_questions, names, "Asesores")
+
+    participation_count = af.count_participations(advisors_df, "Asesores")
+    name_max_count = participation_count.idxmax()
+    quantity_max_count = participation_count.max()
+
+    cuantitative_df = af.convert_qualitative_to_cuantitative(advisors_df, questions)
+    average_score_df = af.get_average_score(cuantitative_df, questions, "Asesores", "Promedio")
+
+    max_average_score_df = af.get_max_average_score(average_score_df, "Promedio")
+    general_advisor_average_score = int(float(average_score_df['Promedio'].mean()) * 10)
+
+    average_score_img = f"assets/images/emotions/{general_advisor_average_score // 10}.png"
+    average_score_title = (
+        list(af.cuantitative_values.keys())[
+            list(af.cuantitative_values.values()).index(
+                general_advisor_average_score // 10
+            )
+        ],
+    )
+    average_score_value = f"Puntaje: {general_advisor_average_score}/100",
+
+    max_average_score_value = str(int(max_average_score_df["Promedio"].iloc[0] * 10)) + "%"
+    max_average_score_names = [
+        html.P(
+            name,
+            className="data-text",
+        )
+        for name in max_average_score_df["Asesores"].to_list()
+    ]
+
+    average_score_graph = create_average_score_graph(average_score_df)
+    participation_count_graph = create_participation_count_graph(participation_count)
+
+    clients_again_chart = create_question_pie_chart(advisors_df, "Porcentaje de clientes que contratarían nuevamente el servicio", af.extra_questions[0])
+    clients_recommend_chart = create_question_pie_chart(advisors_df, "Porcentaje de clientes que recomendarían el servicio", af.extra_questions[1])
+
+    return (
+        advisors_df.to_json(date_format='iso', orient='split'),
+        questions,
+        names,
+        names[0],
+        quantity_max_count,
+        name_max_count,
+        average_score_img,
+        average_score_title,
+        average_score_value,
+        max_average_score_value,
+        max_average_score_names,
+        average_score_graph,
+        participation_count_graph,
+        clients_again_chart,
+        clients_recommend_chart
+    )
+
 
 top = dbc.Container(
     [
@@ -54,17 +123,12 @@ top = dbc.Container(
                                 dbc.Col(
                                     html.Div(
                                         [
-                                            html.P(
-                                                quantity_max_count, className="data-text-important"
-                                            ),
+                                            html.P(id="more-participations-count", className="data-text-important"),
                                             html.H3(
                                                 "Más participaciones",
                                                 className="data-card-title",
                                             ),
-                                            html.P(
-                                                name_max_count,
-                                                className="data-text",
-                                            ),
+                                            html.P(id="more-participations-name", className="data-text",),
                                         ],
                                         className="info-container",
                                     ),
@@ -82,8 +146,7 @@ top = dbc.Container(
                             [
                                 dbc.Col(
                                     html.Div(
-                                        html.Img(
-                                            src=f"assets/images/emotions/{general_advisor_average_score // 10}.png",
+                                        html.Img(id="average-score-img",
                                             alt="emotion",
                                             className="img-fluid",
                                         ),
@@ -95,20 +158,14 @@ top = dbc.Container(
                                 dbc.Col(
                                     html.Div(
                                         [
-                                            html.P(
-                                                list(af.cuantitative_values.keys())[
-                                                    list(af.cuantitative_values.values()).index(
-                                                        general_advisor_average_score // 10
-                                                    )
-                                                ],
+                                            html.P(id="average-score-qualitative-title",
                                                 className="data-text-important",
                                             ),
                                             html.H3(
                                                 "Satisfacción general con los asesores",
                                                 className="data-card-title",
                                             ),
-                                            html.P(
-                                                f"Puntaje: {general_advisor_average_score}/100",
+                                            html.P(id="average-score-value",
                                                 className="data-text",
                                             ),
                                         ],
@@ -141,20 +198,13 @@ top = dbc.Container(
                                 dbc.Col(
                                     html.Div(
                                         [
-                                            html.P(
-                                                str(int(max_average_score_df["Promedio"].iloc[0] * 10)) + "%", className="data-text-important"
+                                            html.P(id="max-average-score-value", className="data-text-important"
                                             ),
                                             html.H3(
                                                 "Mejor rendimiento",
                                                 className="data-card-title",
                                             ),
-                                            html.Div([
-                                                html.P(
-                                                    name,
-                                                    className="data-text",
-                                                )
-                                                for name in max_average_score_df["Asesores"].to_list()
-                                            ]),
+                                            html.Div(id="max-average-score-names"),
                                         ],
                                         className="info-container",
                                     ),
@@ -175,11 +225,11 @@ top = dbc.Container(
 
 left_filter_column = dbc.Container([
     html.Label("Selecciona un asesor"),
-    dcc.Dropdown(names, names[0], id="advisor-dropdown", clearable=False),
+    dcc.Dropdown(id="advisor-dropdown", clearable=False),
     html.Hr()
 ])
 
-def create_average_score_graph():
+def create_average_score_graph(average_score_df):
     title = "Promedio de satisfacción por asesor"
     fig = px.bar(
         average_score_df.sort_values(by=["Promedio"], ascending=False),
@@ -195,7 +245,7 @@ def create_average_score_graph():
     return fig
 
 
-def create_participation_count_graph():
+def create_participation_count_graph(participation_count):
     title = "Conteo de participación por asesor"
     sorted_series = participation_count.sort_values(ascending=False)
     fig = px.bar(
@@ -214,7 +264,7 @@ def create_participation_count_graph():
     return fig
 
 
-def create_question_pie_chart(title, question):
+def create_question_pie_chart(advisor_df, title, question):
     count_df = advisor_df[question].value_counts().reset_index()
     count_df.columns = ["Respuesta", "Conteo"]
 
@@ -226,10 +276,10 @@ def create_question_pie_chart(title, question):
 layout = [
     top,
     dbc.Row([
-        dbc.Col(dcc.Graph(figure=create_question_pie_chart("Porcentaje de clientes que contratarían nuevamente el servicio", af.extra_questions[0]))),
-        dbc.Col(dcc.Graph(figure=create_question_pie_chart("Porcentaje de clientes que recomendarían el servicio", af.extra_questions[1]))),
-        dbc.Col(dcc.Graph(figure=create_average_score_graph())),
-        dbc.Col(dcc.Graph(figure=create_participation_count_graph()))
+        dbc.Col(dcc.Graph(id="clients-again-pie-chart")),
+        dbc.Col(dcc.Graph(id="clients-recommend-pie-chart")),
+        dbc.Col(dcc.Graph(id="average-score-graph")),
+        dbc.Col(dcc.Graph(id="participation-count-graph"))
     ]),
     dbc.Row([
         dbc.Row(left_filter_column),
@@ -237,15 +287,22 @@ layout = [
     ]),
     dbc.Row([
         dbc.Row(dcc.Graph(id="advisor-suggestions-wordcloud"))
-    ])
+    ]),
+    dcc.Store(id="advisors-data"),
+    dcc.Store(id="advisors-questions")
 ]
 
 
 @callback(
         Output("advisor-graph", "figure"),
+        Output("advisor-suggestions-wordcloud", "figure"),
+        State("advisors-data", "data"),
+        State("advisors-questions", "data"),
         Input("advisor-dropdown", "value")
 )
-def update_advisor_graph(name):
+def update_advisor_graphs(advisors_data, questions, name):
+    advisor_df = data_to_df(advisors_data)
+
     title = f"Distribución de puntuación de {name} por pregunta"
     dff = advisor_df.loc[advisor_df["Asesores"] == name]
 
@@ -280,18 +337,15 @@ def update_advisor_graph(name):
         legend_title_text=None
     )
 
-    return fig
-
-
-@callback(
-        Output("advisor-suggestions-wordcloud", "figure"),
-        Input("advisor-dropdown", "value")
-)
-def update_advisor_suggestions_wordcloud(name):
     particular_advisor_df = advisor_df[advisor_df["Asesores"] == name]
     text_list = list(particular_advisor_df["¿Existe algo que podría ayudarnos a mejorar nuestro servicio?"].dropna().values)
     text = " ".join(text_list)
+    wordcloud_figure = create_wordcloud_figure(text)
 
+    return fig, wordcloud_figure
+
+
+def create_wordcloud_figure(text):
     wordcloud = WordCloud(stopwords=set(nltk.corpus.stopwords.words('spanish')), max_words=100, max_font_size=90)
     wordcloud.generate(text)
 
@@ -358,3 +412,4 @@ def update_advisor_suggestions_wordcloud(name):
     wordcloud_figure_data = {"data": [trace], "layout": layout}
 
     return wordcloud_figure_data
+
