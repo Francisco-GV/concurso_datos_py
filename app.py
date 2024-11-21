@@ -4,6 +4,8 @@ import dash_bootstrap_components as dbc
 
 from data import data_preprocessor
 
+from datetime import date
+
 data_preprocessor.load_global_df()
 
 app = dash.Dash(__name__, use_pages=True, external_stylesheets=[
@@ -82,8 +84,19 @@ app.layout = html.Div(
         html.Div(
             [
                 html.Div([
-                    html.H1("Dashboard", id="page-title")
-                ]),
+                    html.Div([
+                        html.H1("Dashboard", id="page-title"),
+                        html.Div([
+                            dcc.DatePickerRange(id="date-picker-range",
+                                                min_date_allowed=date(2000, 1, 1),
+                                                max_date_allowed=date.today(),
+                                                initial_visible_month=date.today(),
+                                                end_date=date.today(),
+                                                display_format="D/M/Y")
+                        ], className="date-picker-container"),
+                    ], id="title-container"),
+                    html.P(id="output-date-picker-range"),
+                ], id="top-container"),
                 dash.page_container,  # Placeholder for page content
                 footer
             ],
@@ -105,6 +118,35 @@ def update_title(pathname):
     else:
         page = dash.page_registry.get("pages." + pathname.strip("/").replace("-", "_"), {})
     return page.get("h1_title", "Dashboard")
+
+
+@app.callback(
+        Output("output-date-picker-range", "children"),
+        Input("date-picker-range", "start_date"),
+        Input("date-picker-range", "end_date"),
+)
+def update_date(start_date, end_date):
+    print(f"Date selected: {start_date} - {end_date}")
+
+    text_output = ""
+
+    if start_date is not None:
+        start_date_object = date.fromisoformat(start_date)
+        start_date_string = start_date_object.strftime('%d/%b/%y')
+
+        text_output += start_date_string + " - "
+
+    if end_date is not None:
+        end_date_object = date.fromisoformat(end_date)
+        end_date_string =  end_date_object.strftime('%d/%b/%y')
+
+        text_output += end_date_string
+
+
+    print(f"text output: {text_output}")
+
+    return text_output
+
 
 if __name__ == "__main__":
     app.run(debug=True)
