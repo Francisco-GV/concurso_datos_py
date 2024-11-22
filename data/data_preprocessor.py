@@ -12,7 +12,7 @@ range_columns_to_delete = [
     ("¿Qué tipo de servicio te brindamos? ", "Comparte como fue tu experiencia con tu ejecutivo de cuenta en la implementación del servicio."),
 ]
 
-csv_path = os.path.join("test", "Satisfacción de servicio para UPG 2024.csv")
+csv_path = os.path.join("resources", "Satisfacción de servicio para UPG 2024.csv")
 df_global = None
 
 def load_file(path):
