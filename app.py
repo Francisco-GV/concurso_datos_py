@@ -17,9 +17,9 @@ print(max_date)
 
 
 app = dash.Dash(__name__, use_pages=True, external_stylesheets=[
-    dbc.themes.BOOTSTRAP,
-    "https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css"
-])
+        dbc.themes.BOOTSTRAP,
+        "https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css"
+    ], suppress_callback_exceptions=True)
 
 # Sidebar
 sidebar = html.Div(
