@@ -16,6 +16,9 @@ cuantitative_values = {
     "Excelente": 10
 }
 
+info = [
+    "date_created"
+]
 
 extra_questions = [
     "¿Contratarías nuevamente nuestros servicios?",
@@ -126,7 +129,8 @@ def get_advisor_feedback_1_df(df, remove_other_names_column=True):
     advisor_df = pd.concat([df_options, df_questions], axis=1)
 
     extra_questions_df = df.loc[1:, extra_questions]
-    advisor_df = pd.concat([advisor_df, extra_questions_df], axis=1)
+    info_df = df.loc[1:, info]
+    advisor_df = pd.concat([info_df, advisor_df, extra_questions_df], axis=1)
 
     advisor_df = advisor_df.reset_index(drop=True).replace("", np.nan)
 
