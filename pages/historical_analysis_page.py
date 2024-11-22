@@ -29,12 +29,17 @@ def update_historial_analysis(filtered_date_data, start_date, end_date):
     questions = af.get_advisor_questions(advisors_df, questions_range)
     cuantitative_df = af.convert_qualitative_to_cuantitative(advisors_df, questions)
 
-    average_df = ha.determine_general_average_score_on_period(cuantitative_df, "date_created", start_date, end_date, questions)
-    service_trend_df = ha.determine_service_trend_on_period(df.iloc[1:], "date_created", "¿Qué tipo de servicio te brindamos?", start_date, end_date)
+    services_column_name = "¿Qué tipo de servicio te brindamos?"
+    average_df = ha.determine_general_average_score_on_period(
+        cuantitative_df, "date_created", start_date, end_date, questions
+    )
+    service_trend_df = ha.determine_service_trend_on_period(
+        df.iloc[1:], "date_created", services_column_name, start_date, end_date
+    )
 
     return (
         gc.create_average_score_period_graph(average_df, questions),
-        gc.create_service_trend_period_graph(service_trend_df),
+        gc.create_service_trend_period_graph(service_trend_df, services_column_name),
     )
 
 
