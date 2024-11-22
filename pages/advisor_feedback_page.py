@@ -1,12 +1,7 @@
 import dash
 from dash import html, dcc, callback, Output, Input, State
-import pandas as pd
-from wordcloud import WordCloud
 import plotly.express as px
 import dash_bootstrap_components as dbc
-import plotly.graph_objs as go
-
-import nltk
 
 from data.analysis import advisor_feedback as af
 from util import graph_creator as gc
@@ -293,79 +288,9 @@ def update_advisor_graphs(advisors_data, questions, name):
     particular_advisor_df = advisor_df[advisor_df["Asesores"] == name]
     text_list = list(particular_advisor_df["¿Existe algo que podría ayudarnos a mejorar nuestro servicio?"].dropna().values)
     text = " ".join(text_list)
-    wordcloud_figure = create_wordcloud_figure(text)
+    wordcloud_figure = gc.create_wordcloud_figure(text)
 
     return fig, wordcloud_figure
 
 
-def create_wordcloud_figure(text):
-    if len(text) == 0:
-        return {}
-
-    wordcloud = WordCloud(stopwords=set(nltk.corpus.stopwords.words('spanish')), max_words=100, max_font_size=90)
-    wordcloud.generate(text)
-
-    word_list = []
-    freq_list = []
-    fontsize_list = []
-    position_list = []
-    orientation_list = []
-    color_list = []
-
-    for (word, freq), fontsize, position, orientation, color in wordcloud.layout_:
-        word_list.append(word)
-        freq_list.append(freq)
-        fontsize_list.append(fontsize)
-        position_list.append(position)
-        orientation_list.append(orientation)
-        color_list.append(color)
-
-    # get the positions
-    x_arr = []
-    y_arr = []
-    for i in position_list:
-        x_arr.append(i[0])
-        y_arr.append(i[1])
-
-    # get the relative occurence frequencies
-    new_freq_list = []
-    for i in freq_list:
-        new_freq_list.append(i * 80)
-
-    trace = go.Scatter(
-        x=x_arr,
-        y=y_arr,
-        textfont=dict(size=new_freq_list, color=color_list),
-        hoverinfo="text",
-        textposition="top center",
-        hovertext=["{0} - {1}".format(w, f) for w, f in zip(word_list, freq_list)],
-        mode="text",
-        text=word_list,
-    )
-
-    layout = go.Layout(
-        {
-            "xaxis": {
-                "showgrid": False,
-                "showticklabels": False,
-                "zeroline": False,
-                "automargin": True,
-                "range": [-100, 250],
-            },
-            "yaxis": {
-                "showgrid": False,
-                "showticklabels": False,
-                "zeroline": False,
-                "automargin": True,
-                "range": [-100, 450],
-            },
-            "margin": dict(t=50, b=20, l=10, r=10, pad=4),
-            "hovermode": "closest",
-            "title": "Frecuencia de palabras en sugerencias de clientes",
-        }
-    )
-
-    wordcloud_figure_data = {"data": [trace], "layout": layout}
-
-    return wordcloud_figure_data
 

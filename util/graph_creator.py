@@ -1,6 +1,9 @@
 import plotly.express as px
 from data.analysis import general as g
 from data.analysis import advisor_feedback as af
+from wordcloud import WordCloud
+import nltk
+import plotly.graph_objs as go
 
 
 def insert_line_breaks(text, max_length, line_break_char):
@@ -90,3 +93,75 @@ def create_average_score_period_graph(average_df, questions):
     fig = px.line(average_df, x="period", y=questions, markers=True, title=title)
 
     return fig
+
+
+def create_wordcloud_figure(text):
+    if len(text) == 0:
+        return {}
+
+    wordcloud = WordCloud(stopwords=set(nltk.corpus.stopwords.words('spanish')), max_words=100, max_font_size=90)
+    wordcloud.generate(text)
+
+    word_list = []
+    freq_list = []
+    fontsize_list = []
+    position_list = []
+    orientation_list = []
+    color_list = []
+
+    for (word, freq), fontsize, position, orientation, color in wordcloud.layout_:
+        word_list.append(word)
+        freq_list.append(freq)
+        fontsize_list.append(fontsize)
+        position_list.append(position)
+        orientation_list.append(orientation)
+        color_list.append(color)
+
+    # get the positions
+    x_arr = []
+    y_arr = []
+    for i in position_list:
+        x_arr.append(i[0])
+        y_arr.append(i[1])
+
+    # get the relative occurence frequencies
+    new_freq_list = []
+    for i in freq_list:
+        new_freq_list.append(i * 80)
+
+    trace = go.Scatter(
+        x=x_arr,
+        y=y_arr,
+        textfont=dict(size=new_freq_list, color=color_list),
+        hoverinfo="text",
+        textposition="top center",
+        hovertext=["{0} - {1}".format(w, f) for w, f in zip(word_list, freq_list)],
+        mode="text",
+        text=word_list,
+    )
+
+    layout = go.Layout(
+        {
+            "xaxis": {
+                "showgrid": False,
+                "showticklabels": False,
+                "zeroline": False,
+                "automargin": True,
+                "range": [-100, 250],
+            },
+            "yaxis": {
+                "showgrid": False,
+                "showticklabels": False,
+                "zeroline": False,
+                "automargin": True,
+                "range": [-100, 450],
+            },
+            "margin": dict(t=50, b=20, l=10, r=10, pad=4),
+            "hovermode": "closest",
+            "title": "Frecuencia de palabras en sugerencias de clientes",
+        }
+    )
+
+    wordcloud_figure_data = {"data": [trace], "layout": layout}
+
+    return wordcloud_figure_data
