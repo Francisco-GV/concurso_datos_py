@@ -10,6 +10,13 @@ from util import graph_creator as gc
 from util import util
 
 
+share_authorization_column = "Para finalizar, nos encantaría poder presentarlos como uno más de nuestros clientes;" \
+    " ¿nos autorizan poder usar el nombre comercial como parte de nuestra cartera de clientes?Esto solo es por fines" \
+    " de referencia de nuestros servicios. Nos comprometemos a siempre guardar la confidencialidad de la información" \
+    " de nuestros clientes y asociados comerciales.Si tienes alguna duda, por favor pueden consultar nuestro aviso de" \
+    " confidencialidad.www.catch.com.mx/aviso_de_privacidad_consulting"
+
+
 @callback(
         Output("home-average-score-qualitative-title", "children"),
         Output("home-average-score-value", "children"),
@@ -19,6 +26,8 @@ from util import util
         Output("home-more-participations-name", "children"),
         Output("type-service-pie-chart", "figure"),
         Output("recomendation-pie-chart", "figure"),
+        Output("recontract-pie-chart", "figure"),
+        Output("share-authorization-pie-chart", "figure"),
         Output("record-number-value", "children"),
         Input("filtered-date-df", "data")
 )
@@ -60,6 +69,8 @@ def update_home(filtered_date_data):
 
     type_service_pie_chart = gc.create_type_service_pie_chart(df.iloc[1:])
     recommendation_pie_chart = gc.create_recomendation_pie_chart(df.iloc[1:])
+    recontract_pie_chart = gc.create_recontract_pie_chart(df.iloc[1:])
+    share_authorization_pie_chart = gc.create_share_authorization_chart(df.iloc[1:], share_authorization_column)
 
     record_number = g.get_row_number(df) - 1 # The first row is column info
 
@@ -72,6 +83,8 @@ def update_home(filtered_date_data):
         name_max_count,
         type_service_pie_chart,
         recommendation_pie_chart,
+        share_authorization_pie_chart,
+        recontract_pie_chart,
         record_number
     )
 
@@ -153,6 +166,8 @@ layout = html.Div(
                     [
                         dbc.Col([dcc.Graph(id="type-service-pie-chart")]),
                         dbc.Col([dcc.Graph(id="recomendation-pie-chart")]),
+                        dbc.Col([dcc.Graph(id="recontract-pie-chart")]),
+                        dbc.Col([dcc.Graph(id="share-authorization-pie-chart")]),
                     ]
                 )
             ]

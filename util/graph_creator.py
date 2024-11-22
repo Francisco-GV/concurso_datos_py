@@ -70,6 +70,27 @@ def create_recomendation_pie_chart(advisor_df):
     return fig
 
 
+def create_recontract_pie_chart(advisor_df):
+    title = "Clientes que volverían a contratar el servicio"
+    count_df = advisor_df[af.extra_questions[1]].value_counts().reset_index()
+    count_df.columns = ["Respuesta", "Conteo"]
+
+    fig = px.pie(count_df, values="Conteo", names="Respuesta", title=title)
+
+    return fig
+
+
+def create_share_authorization_chart(df, column):
+    title = "Clientes que autorizaron ser nombrados"
+    count_df = df[column].value_counts().reset_index()
+    count_df.columns = ["Respuesta", "Conteo"]
+    count_df['Respuesta'] = count_df['Respuesta'].apply(lambda x: util.insert_line_breaks(x, 20, "<br>"))
+
+    fig = px.pie(count_df, values="Conteo", names="Respuesta", title=title)
+
+    return fig
+
+
 def create_average_score_period_graph(average_df, questions):
     title = "Promedio de satisfacción con el servicio"
 
