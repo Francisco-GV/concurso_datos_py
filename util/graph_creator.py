@@ -1,4 +1,3 @@
-
 import plotly.express as px
 from data.analysis import general as g
 from data.analysis import advisor_feedback as af
@@ -84,3 +83,10 @@ def create_recomendation_pie_chart(advisor_df):
 
     return fig
 
+
+def create_average_score_period_graph(average_df, questions):
+    title = "Promedios de satisfacción en el periodo seleccionado"
+
+    fig = px.line(average_df, x="period", y=questions, markers=True, title=title)
+
+    return fig
