@@ -4,24 +4,7 @@ from data.analysis import advisor_feedback as af
 from wordcloud import WordCloud
 import nltk
 import plotly.graph_objs as go
-
-
-def insert_line_breaks(text, max_length, line_break_char):
-    words = text.split()
-    result = ""
-    current_length = 0
-    for word in words:
-        if current_length + len(word) + 1 > max_length:
-            result += line_break_char + word
-            current_length = len(word)
-        elif result:
-            result += " " + word
-            current_length += len(word) + 1
-        else:
-            result = word
-            current_length = len(word)
-
-    return result
+from util import util
 
 
 def create_average_score_graph(average_score_df):
@@ -71,7 +54,7 @@ def create_question_pie_chart(advisor_df, title, question):
 def create_type_service_pie_chart(df):
     title = "Servicios brindados"
     count_df = g.count_service_type(df)
-    count_df['Servicio'] = count_df['Servicio'].apply(lambda x: insert_line_breaks(x, 20, "<br>"))
+    count_df['Servicio'] = count_df['Servicio'].apply(lambda x: util.insert_line_breaks(x, 20, "<br>"))
     fig = px.pie(count_df, values="Conteo", names="Servicio", title=title)
 
     return fig
@@ -95,17 +78,21 @@ def create_average_score_period_graph(average_df, questions):
     return fig
 
 
-def create_service_trend_period_graph(trend_df):
+def create_service_trend_period_graph(trend_df, services_column_name):
     title = "Tendencia de contratación de servicios"
+
+    trend_df[services_column_name] = trend_df[services_column_name].apply(
+        lambda x: util.insert_line_breaks(x, 30, "<br>")
+    )
 
     fig = px.line(
         trend_df,
         x="period_timestamp",
         y="Conteo",
         markers=True,
-        color="¿Qué tipo de servicio te brindamos?",
+        color=services_column_name,
         title=title,
-        labels={"period_timestamp": "Periodo", "Conteo": "Cantidad", "Servicio": "Servicio"}
+        labels={"period_timestamp": "Periodo", "Conteo": "Cantidad"}
     )
 
     fig.update_layout(
@@ -116,7 +103,7 @@ def create_service_trend_period_graph(trend_df):
         ),
         legend=dict(
             title="Servicios"
-        )
+        ),
     )
 
     return fig
