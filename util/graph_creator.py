@@ -71,9 +71,17 @@ def create_recomendation_pie_chart(advisor_df):
 
 
 def create_average_score_period_graph(average_df, questions):
-    title = "Promedios de satisfacción en el periodo seleccionado"
+    title = "Promedio de satisfacción con el servicio"
 
-    fig = px.line(average_df, x="period", y=questions, markers=True, title=title)
+    fig = px.line(
+        average_df,
+        x="period",
+        y=questions,
+        markers=True,
+        title=title,
+        labels={"value": "Promedio"})
+
+    fig.update_layout(xaxis_title=None)
 
     return fig
 
@@ -92,7 +100,7 @@ def create_service_trend_period_graph(trend_df, services_column_name):
         markers=True,
         color=services_column_name,
         title=title,
-        labels={"period_timestamp": "Periodo", "Conteo": "Cantidad"}
+        labels={"Conteo": "Cantidad"}
     )
 
     fig.update_layout(
@@ -105,6 +113,37 @@ def create_service_trend_period_graph(trend_df, services_column_name):
             title="Servicios"
         ),
     )
+
+    fig.update_layout(xaxis_title=None)
+
+    return fig
+
+
+def create_advisor_participation_period_graph(participation_df):
+    title = "Participación de asesor a lo largo del tiempo"
+
+    fig = px.line(
+        participation_df,
+        x="period_timestamp",
+        y="Conteo",
+        color="Asesores",
+        markers=True,
+        title=title,
+        labels={"Conteo": "Participaciones"}
+    )
+
+    fig.update_layout(
+        xaxis=dict(
+            tickmode='array',
+            tickvals=participation_df["period_timestamp"],
+            ticktext=participation_df["period_formatted"]
+        ),
+        legend=dict(
+            title="Asesores"
+        ),
+    )
+
+    fig.update_layout(xaxis_title=None)
 
     return fig
 

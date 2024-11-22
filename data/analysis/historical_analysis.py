@@ -59,3 +59,23 @@ def determine_service_trend_on_period(df, date_column, service_column, start_dat
 
     return trend_df
 
+
+def determine_advisor_participation_on_period(df, date_column, start_date, end_date):
+    grouping_level = determine_grouping_level(start_date, end_date)
+
+    df[date_column] = pd.to_datetime(df[date_column])
+
+    df["period"] = df[date_column].dt.to_period(freq = grouping_level)
+
+    participation_df = df.groupby(["period", "Asesores"]).size().reset_index(name="Conteo")
+
+    participation_df["period_timestamp"] = participation_df["period"].dt.to_timestamp()
+    participation_df["period_formatted"] = participation_df["period"].dt.strftime({
+            'D': '%d/%m/%Y',
+            'M': '%m/%Y',
+            'Y': '%Y'
+    }[grouping_level])
+
+    return participation_df
+
+
