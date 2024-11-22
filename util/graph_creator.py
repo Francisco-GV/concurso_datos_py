@@ -95,6 +95,33 @@ def create_average_score_period_graph(average_df, questions):
     return fig
 
 
+def create_service_trend_period_graph(trend_df):
+    title = "Tendencia de contratación de servicios"
+
+    fig = px.line(
+        trend_df,
+        x="period_timestamp",
+        y="Conteo",
+        markers=True,
+        color="¿Qué tipo de servicio te brindamos?",
+        title=title,
+        labels={"period_timestamp": "Periodo", "Conteo": "Cantidad", "Servicio": "Servicio"}
+    )
+
+    fig.update_layout(
+        xaxis=dict(
+            tickmode='array',
+            tickvals=trend_df["period_timestamp"],
+            ticktext=trend_df["period_formatted"]
+        ),
+        legend=dict(
+            title="Servicios"
+        )
+    )
+
+    return fig
+
+
 def create_wordcloud_figure(text):
     if len(text) == 0:
         return {}

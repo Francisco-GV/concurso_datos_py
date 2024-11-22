@@ -40,3 +40,22 @@ def determine_general_average_score_on_period(df, date_column, start_date, end_d
 
     return average
 
+
+def determine_service_trend_on_period(df, date_column, service_column, start_date, end_date):
+    grouping_level = determine_grouping_level(start_date, end_date)
+
+    df[date_column] = pd.to_datetime(df[date_column])
+
+    df["period"] = df[date_column].dt.to_period(freq = grouping_level)
+
+    trend_df = df.groupby(["period", service_column]).size().reset_index(name="Conteo")
+
+    trend_df["period_timestamp"] = trend_df["period"].dt.to_timestamp()
+    trend_df["period_formatted"] = trend_df["period"].dt.strftime({
+            'D': '%d/%m/%Y',
+            'M': '%m/%Y',
+            'Y': '%Y'
+    }[grouping_level])
+
+    return trend_df
+
