@@ -10,15 +10,10 @@ import nltk
 
 from data.analysis import advisor_feedback as af
 from util import graph_creator as gc
+from util import util
 
 
 dash.register_page(__name__, title="Nivel de atención", name="Nivel de atención", h1_title="Análisis de nivel de atención", icon="person-vcard")
-
-
-def data_to_df(data):
-    if data is None:
-        raise dash.exceptions.PreventUpdate
-    return pd.read_json(data, orient="split")
 
 
 @callback(
@@ -40,7 +35,7 @@ def data_to_df(data):
     Input("filtered-date-df", "data")
 )
 def create_advisors_data(filtered_date_data):
-    df = data_to_df(filtered_date_data)
+    df = util.data_to_df(filtered_date_data)
 
     advisors_df, names_range, questions_range = af.get_advisor_feedback_1_df(df)
     questions = af.get_advisor_questions(advisors_df, questions_range)
@@ -259,7 +254,7 @@ layout = [
         Input("advisor-dropdown", "value")
 )
 def update_advisor_graphs(advisors_data, questions, name):
-    advisor_df = data_to_df(advisors_data)
+    advisor_df = util.data_to_df(advisors_data)
 
     title = f"Distribución de puntuación de {name} por pregunta"
     dff = advisor_df.loc[advisor_df["Asesores"] == name]

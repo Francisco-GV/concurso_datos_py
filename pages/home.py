@@ -7,12 +7,7 @@ import dash_bootstrap_components as dbc
 from data.analysis import advisor_feedback as af
 from data.analysis import general as g
 from util import graph_creator as gc
-
-
-def data_to_df(data):
-    if data is None:
-        raise dash.exceptions.PreventUpdate
-    return pd.read_json(data, orient="split")
+from util import util
 
 
 @callback(
@@ -28,7 +23,7 @@ def data_to_df(data):
         Input("filtered-date-df", "data")
 )
 def update_home(filtered_date_data):
-    df = data_to_df(filtered_date_data)
+    df = util.data_to_df(filtered_date_data)
 
     advisors_df, names_range, questions_range = af.get_advisor_feedback_1_df(df)
     questions = af.get_advisor_questions(advisors_df, questions_range)

@@ -7,14 +7,9 @@ from datetime import date
 from data.analysis import advisor_feedback as af
 from data.analysis import historical_analysis as ha
 from util.graph_creator import create_average_score_period_graph
+from util import util
 
 dash.register_page(__name__, title="Análisis Histórico", name="Análisis Histórico", h1_title="Análisis Histórico", icon="clock-history")
-
-
-def data_to_df(data):
-    if data is None:
-        raise dash.exceptions.PreventUpdate
-    return pd.read_json(data, orient="split")
 
 
 @callback(
@@ -24,7 +19,7 @@ def data_to_df(data):
     Input("date-picker-range", "end_date"),
 )
 def update_historial_analysis(filtered_date_data, start_date, end_date):
-    df = data_to_df(filtered_date_data)
+    df = util.data_to_df(filtered_date_data)
 
     start_date = pd.to_datetime(date.fromisoformat(start_date))
     end_date = pd.to_datetime(date.fromisoformat(end_date))
