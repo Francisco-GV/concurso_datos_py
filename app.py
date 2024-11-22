@@ -1,3 +1,4 @@
+import locale
 import dash
 from dash import html, dcc, Output, Input
 import dash_bootstrap_components as dbc
@@ -7,14 +8,12 @@ import pandas as pd
 
 from datetime import date
 
+locale.setlocale(locale.LC_TIME, "en_US.UTF-8")
+
 dp.load_global_df()
 
 min_date = dp.df_global["date_created"].min().date()
 max_date = dp.df_global["date_created"].max().date()
-
-print(min_date)
-print(max_date)
-
 
 app = dash.Dash(__name__, use_pages=True, external_stylesheets=[
         dbc.themes.BOOTSTRAP,
