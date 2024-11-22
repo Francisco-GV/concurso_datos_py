@@ -5,6 +5,7 @@ from wordcloud import WordCloud
 import nltk
 import plotly.graph_objs as go
 from util import util
+import pandas as pd
 
 
 def create_average_score_graph(average_score_df):
@@ -165,6 +166,20 @@ def create_advisor_participation_period_graph(participation_df):
     )
 
     fig.update_layout(xaxis_title=None)
+
+    return fig
+
+
+def create_datetime_heatmap(datetime_df):
+    fig = px.density_heatmap(
+        datetime_df,
+        x="hour",
+        y="day_of_week",
+        z="count",
+        color_continuous_scale="Viridis",
+        labels={"hour": "Hora", "day_of_week": "Día", "count": "Frecuencia"},
+        title="Frecuencia de encuestas por día y hora"
+    )
 
     return fig
 

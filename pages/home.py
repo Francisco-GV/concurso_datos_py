@@ -28,6 +28,7 @@ share_authorization_column = "Para finalizar, nos encantaría poder presentarlos
         Output("recomendation-pie-chart", "figure"),
         Output("recontract-pie-chart", "figure"),
         Output("share-authorization-pie-chart", "figure"),
+        #Output("survey-frecuency-heatmap", "figure"),
         Output("record-number-value", "children"),
         Input("filtered-date-df", "data")
 )
@@ -74,6 +75,9 @@ def update_home(filtered_date_data):
 
     record_number = g.get_row_number(df) - 1 # The first row is column info
 
+    #heatmap_df = g.get_time_info_df(df[1:], "date_created")
+    #survey_frecuency_heatmap = gc.create_datetime_heatmap(heatmap_df)
+
     return (
         average_score_title,
         average_score_value,
@@ -85,92 +89,108 @@ def update_home(filtered_date_data):
         recommendation_pie_chart,
         share_authorization_pie_chart,
         recontract_pie_chart,
+        #survey_frecuency_heatmap,
         record_number
     )
 
 
 dash.register_page(__name__, title="Inicio", path="/", name="Inicio", h1_title="General", icon="house")
 
-layout = html.Div(
+layout = dbc.Container(
     [
-        dbc.Container(
+        dbc.Row(
             [
-                dbc.Row(
+                dbc.Col(
                     [
-                        dbc.Col(
+                        dbc.Card(
                             [
-                                dbc.Card(
-                                    [
-                                        html.P(id="record-number-value", className="data-text-important"),
-                                        html.H3(
-                                            "Total de respuestas",
-                                            className="data-card-title",
-                                        ),
-                                    ],
-                                    className="data-card h-100",
+                                html.P(
+                                    id="record-number-value",
+                                    className="data-text-important",
                                 ),
-                            ]
-                        ),
-                        dbc.Col(
-                            [
-                                dbc.Card(
-                                    [
-                                        html.P(id="home-average-score-qualitative-title",
-                                            className="data-text-important",
-                                        ),
-                                        html.P(id="home-average-score-value",
-                                            className="data-text",
-                                        ),
-                                        html.H3(
-                                            "Satisfacción general con el servicio",
-                                            className="data-card-title",
-                                        ),
-                                    ],
-                                    className="data-card h-100",
+                                html.H3(
+                                    "Total de respuestas",
+                                    className="data-card-title",
                                 ),
-                            ]
-                        ),
-                        dbc.Col(
-                            [
-                                dbc.Card(
-                                    [
-                                        html.P(id="home-max-average-score-value", className="data-text-important"),
-                                        html.Div(id="home-max-average-score-names"),
-                                        html.H3(
-                                            "Mejor rendimiento",
-                                            className="data-card-title",
-                                        ),
-                                    ],
-                                    className="data-card h-100",
-                                ),
-                            ]
-                        ),
-                        dbc.Col(
-                            [
-                                dbc.Card(
-                                    [
-                                        html.P(id="home-more-participations-count", className="data-text-important"),
-                                        html.P(id="home-more-participations-name", className="data-text"),
-                                        html.H3(
-                                            "Más participaciones",
-                                            className="data-card-title",
-                                        ),
-                                    ],
-                                    className="data-card h-100",
-                                ),
-                            ]
+                            ],
+                            className="data-card h-100",
                         ),
                     ]
                 ),
-                dbc.Row(
+                dbc.Col(
                     [
-                        dbc.Col([dcc.Graph(id="type-service-pie-chart")]),
-                        dbc.Col([dcc.Graph(id="recomendation-pie-chart")]),
-                        dbc.Col([dcc.Graph(id="recontract-pie-chart")]),
-                        dbc.Col([dcc.Graph(id="share-authorization-pie-chart")]),
+                        dbc.Card(
+                            [
+                                html.P(
+                                    id="home-average-score-qualitative-title",
+                                    className="data-text-important",
+                                ),
+                                html.P(
+                                    id="home-average-score-value",
+                                    className="data-text",
+                                ),
+                                html.H3(
+                                    "Satisfacción general con el servicio",
+                                    className="data-card-title",
+                                ),
+                            ],
+                            className="data-card h-100",
+                        ),
                     ]
-                )
+                ),
+                dbc.Col(
+                    [
+                        dbc.Card(
+                            [
+                                html.P(
+                                    id="home-max-average-score-value",
+                                    className="data-text-important",
+                                ),
+                                html.Div(id="home-max-average-score-names"),
+                                html.H3(
+                                    "Mejor rendimiento",
+                                    className="data-card-title",
+                                ),
+                            ],
+                            className="data-card h-100",
+                        ),
+                    ]
+                ),
+                dbc.Col(
+                    [
+                        dbc.Card(
+                            [
+                                html.P(
+                                    id="home-more-participations-count",
+                                    className="data-text-important",
+                                ),
+                                html.P(
+                                    id="home-more-participations-name",
+                                    className="data-text",
+                                ),
+                                html.H3(
+                                    "Más participaciones",
+                                    className="data-card-title",
+                                ),
+                            ],
+                            className="data-card h-100",
+                        ),
+                    ]
+                ),
             ]
-        )
+        ),
+        dbc.Row(
+            [
+                dbc.Col([dcc.Graph(id="type-service-pie-chart")]),
+                dbc.Col([dcc.Graph(id="recomendation-pie-chart")]),
+                dbc.Col([dcc.Graph(id="recontract-pie-chart")]),
+                dbc.Col([dcc.Graph(id="share-authorization-pie-chart")]),
+            ]
+        ),
+        # dbc.Row(
+        #    [
+        #        dbc.Col([dcc.Graph(id="survey-frecuency-heatmap")])
+        #    ]
+        # )
     ]
 )

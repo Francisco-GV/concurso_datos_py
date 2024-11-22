@@ -207,7 +207,7 @@ top = dbc.Container(
     fluid=True,
 )
 
-left_filter_column = dbc.Container([
+left_filter_column = dbc.Card([
     html.Label("Selecciona un asesor"),
     dcc.Dropdown(id="advisor-dropdown", clearable=False),
     html.Hr()

@@ -50,46 +50,42 @@ def update_historial_analysis(filtered_date_data, start_date, end_date):
     )
 
 
-layout = html.Div(
+layout = dbc.Container(
     [
-        dbc.Container(
+        dbc.Row(
             [
-                dbc.Row(
+                dbc.Col(
                     [
-                        dbc.Col(
+                        dbc.Card(
                             [
-                                dbc.Card(
-                                    [
-                                        dcc.Graph(id="general-average-score-period")
-                                    ]
-                                )
-                            ]
-                        ),
-                        dbc.Col(
-                            [
-                                dbc.Card(
-                                    [
-                                        dcc.Graph(id="service-trend-period-graph")
-                                    ]
-                                )
+                                dcc.Graph(id="general-average-score-period")
                             ]
                         )
                     ]
                 ),
-                dbc.Row(
+                dbc.Col(
                     [
-                        dbc.Col(
+                        dbc.Card(
                             [
-                                dbc.Card(
-                                    [
-                                        dcc.Graph(id="advisor-participation-period-graph")
-                                    ]
-                                )
+                                dcc.Graph(id="service-trend-period-graph")
                             ]
-                        ),
+                        )
                     ]
                 )
             ]
+        ),
+        dbc.Row(
+            [
+                dbc.Col(
+                    [
+                        dbc.Card(
+                            [
+                                dcc.Graph(id="advisor-participation-period-graph")
+                            ]
+                        )
+                    ]
+                ),
+            ]
         )
-    ]
+    ], fluid=True
 )
