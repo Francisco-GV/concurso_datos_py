@@ -58,8 +58,8 @@ def update_home(filtered_date_data):
         for name in max_average_score_df["Asesores"].to_list()
     ]
 
-    type_service_pie_chart = gc.create_type_service_pie_chart(df)
-    recommendation_pie_chart = gc.create_recomendation_pie_chart(df)
+    type_service_pie_chart = gc.create_type_service_pie_chart(df.iloc[1:])
+    recommendation_pie_chart = gc.create_recomendation_pie_chart(df.iloc[1:])
 
     record_number = g.get_row_number(df) - 1 # The first row is column info
 
