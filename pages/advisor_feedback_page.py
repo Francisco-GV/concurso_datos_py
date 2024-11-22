@@ -25,8 +25,6 @@ dash.register_page(__name__, title="Nivel de atención", name="Nivel de atenció
     Output("max-average-score-names", "children"),
     Output("average-score-graph", "figure"),
     Output("participation-count-graph", "figure"),
-    Output("clients-again-pie-chart", "figure"),
-    Output("clients-recommend-pie-chart", "figure"),
     Input("filtered-date-df", "data")
 )
 def create_advisors_data(filtered_date_data):
@@ -69,9 +67,6 @@ def create_advisors_data(filtered_date_data):
     average_score_graph = gc.create_average_score_graph(average_score_df)
     participation_count_graph = gc.create_participation_count_graph(participation_count)
 
-    clients_again_chart = gc.create_question_pie_chart(advisors_df, "Porcentaje de clientes que contratarían nuevamente el servicio", af.extra_questions[0])
-    clients_recommend_chart = gc.create_question_pie_chart(advisors_df, "Porcentaje de clientes que recomendarían el servicio", af.extra_questions[1])
-
     return (
         advisors_df.to_json(date_format='iso', orient='split'),
         questions,
@@ -86,8 +81,6 @@ def create_advisors_data(filtered_date_data):
         max_average_score_names,
         average_score_graph,
         participation_count_graph,
-        clients_again_chart,
-        clients_recommend_chart
     )
 
 
@@ -224,8 +217,6 @@ left_filter_column = dbc.Container([
 layout = [
     top,
     dbc.Row([
-        dbc.Col(dcc.Graph(id="clients-again-pie-chart")),
-        dbc.Col(dcc.Graph(id="clients-recommend-pie-chart")),
         dbc.Col(dcc.Graph(id="average-score-graph")),
         dbc.Col(dcc.Graph(id="participation-count-graph"))
     ]),
